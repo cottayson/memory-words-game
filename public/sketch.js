@@ -59,8 +59,8 @@ let backgroundColor = [100, 100, 100]
 let hints = [
   'PEN',
   'TREE',
-  // 'WIND',
-  // 'HELLO', 
+  'WIND',
+  'HELLO', 
   // 'WATER',
   // 'CHILD',
   // 'COLOR',
@@ -69,7 +69,6 @@ let hints = [
   // 'JAVASCRIPT',
 ]
 let hintIndex = 0
-let hint = "ERROR"
 
 let wordAccepted = false
 
@@ -81,7 +80,6 @@ let label
 function setup() {
   label = createP('Собери слово')
   createCanvas(w, h)
-  nextHint()
   windowResized()
   textFont("consolas", textSize)
   textAlign(CENTER, CENTER);
@@ -95,7 +93,7 @@ function setup() {
 
 function isAllWordsUsed() {
   // если последнее слово, то рестарт игры
-  if(hintIndex == hints.length) {
+  if(hintIndex == hints.length - 1) {
     return true
   } else {
     return false
@@ -103,10 +101,11 @@ function isAllWordsUsed() {
 }
 
 function userFoundAllLetters() {
-  return selectedLetters.length >= hint.length
+  return selectedLetters.length >= hints[hintIndex].length
 }
 
 function resetGame() {
+  console.log('resetGame')
   label.show()
   hintIndex = 0 // теперь индекс указывает на первое слово в списке слов hints
 }
@@ -117,14 +116,12 @@ function userAction() {
     selectedLetters = []
     scatterLetters()
     gameState = GAME_STATE_CLICK_LETTER
-  } else
-  if(gameState == GAME_STATE_CLICK_LETTER) {
+  } else if(gameState == GAME_STATE_CLICK_LETTER) {
     selectLetter(mouseX, mouseY)
     if(userFoundAllLetters()) {
       gameState = GAME_STATE_SHOW_RESULT
     }
-  } else
-  if(gameState == GAME_STATE_SHOW_RESULT) {
+  } else if(gameState == GAME_STATE_SHOW_RESULT) {
     if(isAllWordsUsed()) {// если слова кончились
       // спрашиваем игрока: сыграть заново?
       gameState = GAME_STATE_RESTART
@@ -133,25 +130,12 @@ function userAction() {
       nextHint()
       gameState = GAME_STATE_START
     }
-
-    // if(isAllWordsUsed()) {
-      // gameState = GAME_STATE_RESTART
-    // } else {
-      // gameState = GAME_STATE_SHOW_RESULT
-    // }
-    // gameState = GAME_STATE_SHOW_HINT
-  } else
-  if(gameState == GAME_STATE_RESTART)  {
+  } else if(gameState == GAME_STATE_RESTART)  {
     resetGame()
 
     gameState = GAME_STATE_START
   }
   console.log(`hintIndex = ${hintIndex}`)
-  draw() // обновляем картинку игры(canvas)
-}
-
-function showRestartScreen() {
-  text("начать игру заново?", gameWidth() / 2, gameHeight() / 2)
 }
 
 // ***************************************************
@@ -161,19 +145,24 @@ function showRestartScreen() {
 function draw() {
   background(backgroundColor);
   
-  if (gameState == GAME_STATE_START) {
+  if (gameState == GAME_STATE_START) { //показываем слово
+    
     showHint()
-  } else
-  if(gameState == GAME_STATE_CLICK_LETTER) {
+    
+  } else if(gameState == GAME_STATE_CLICK_LETTER) { //игрок кликает на буквы
+    
     for (let letter of letters) {
       letter.show()
     }
-  } else
-  if(gameState == GAME_STATE_SHOW_RESULT) {
+    
+  } else if(gameState == GAME_STATE_SHOW_RESULT) { // показываем результат
+    
     showResult()
-  } else
-  if(gameState == GAME_STATE_RESTART) {
+    
+  } else if(gameState == GAME_STATE_RESTART) { // спрашиваем: перезапустить игру?
+    
     showRestartScreen()
+    
   }
   
   // if(isPhone()) {
@@ -189,10 +178,9 @@ function draw() {
 }
 
 function nextHint() {
-  if(hintIndex >= hints.length) {
-    throw "Ошибка индекс указывает на несуществующее слово"
+  if(hintIndex >= hints.length || hintIndex < 0) {
+    throw `Ошибка индекс ${hintIndex} указывает на несуществующее слово`
   }
-  hint = hints[hintIndex]
   hintIndex = hintIndex + 1
 }
 
@@ -203,7 +191,7 @@ function showHint() {
     gameHeight() / 2
   )
   fill(hintColor)
-  text(hint, 
+  text(hints[hintIndex], 
     gameWidth() / 2,
     gameHeight() / 2 + letterHeight
   )
@@ -212,11 +200,11 @@ function showHint() {
 
 function showResult() {
   push()
-  if(selectedLetters == hint) { // слово собрано верно
+  if(selectedLetters == hints[hintIndex]) { // слово собрано верно
     fill(255, 255, 255)
     text('Ты верно собрал слово!',gameWidth() / 2, gameHeight() / 2)
     fill(255, 255, 0)
-    text(hint,                   gameWidth() / 2,  gameHeight() / 2 + letterHeight)
+    text(hints[hintIndex],                   gameWidth() / 2,  gameHeight() / 2 + letterHeight)
   } else { // слово собрано неверно
     fill(255, 255, 255)
     text('Ты собрал слово:',     gameWidth() / 2, gameHeight() / 2)
@@ -225,9 +213,13 @@ function showResult() {
     fill(255, 255, 255)
     text('нужно было собрать: ', gameWidth() / 2, gameHeight() / 2 + letterHeight*2)
     fill(255, 255, 255)
-    text(hint,                   gameWidth() / 2,  gameHeight() / 2 + letterHeight*3)
+    text(hints[hintIndex],                   gameWidth() / 2,  gameHeight() / 2 + letterHeight*3)
   }
   pop()
+}
+
+function showRestartScreen() {
+  text("начать игру заново?", gameWidth() / 2, gameHeight() / 2)
 }
 
 function gameWidth() {

@@ -47,7 +47,7 @@ function letterColor() {
 }
 
 function extendAlphabet(alphabet) {
-  return alphabet + hint
+  return alphabet + hints[hintIndex]
 }
 
 function scatterLetters() {
