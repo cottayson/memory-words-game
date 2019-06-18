@@ -5,23 +5,30 @@
     <meta name="viewport" width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0>
     <style>
     body {
+      background-color: lime;
       margin: 0;
       padding: 0;
     }
     p {
-      margin: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin: -100px 0 0 -140px;
       background-color: yellow;
       color: red;
-      font-size: 20px;
+      font-size: 50px;
     }
     </style>
 
   </head>
   <body>
-  <p>Крутая игра</p>
-  
+  <!-- p5 library -->
   <script src="p5/p5.min.js"></script>
   <script src="p5/addons/p5.dom.min.js"></script>
+  <!-- game files -->
+  <script src="mobile.js"></script>
+  <script src="letter.js"></script>
+  <script src="input.js"></script>
   <script src="sketch.js"></script>
   </body>
 
