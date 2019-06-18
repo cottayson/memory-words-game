@@ -52,22 +52,31 @@ function extendAlphabet(alphabet) {
 
 function scatterLetters() {
   letters = []
+  // добавляем в алфавит слово, которое нужно найти
   extendedAlphabet = extendAlphabet(alphabet)
-  console.log(extendedAlphabet)
-  
-  for (let oneLetter of extendedAlphabet) {
-    letters.push(new Letter(
-       random(0, gameWidth() - letterWidth), 
-       random(0, gameHeight() - letterHeight), 
-       oneLetter
-    ))
+  console.log(`extendedAlphabet = ${extendedAlphabet}`)
+  // раскидываем буквы
+  for (let symbol of extendedAlphabet) {
+    
+    // создаем букву в случайном месте на экране
+    // буквы не должны выходить за края экрана
+    // поэтому отнимаем от ширины(высоты) экрана
+    // ширину(высоту) прямоугольника, огрничивающего букву
+    // random(a, b) генерирует случайное число в интервале [a, b]
+    let xpos = random(0, gameWidth() - letterWidth)
+    let ypos = random(0, gameHeight() - letterHeight)
+    
+    let letter = new Letter(xpos, ypos, symbol)
+    
+    // добавляем букву в кучку
+    letters.push(letter)
   }
 }
 
 function selectLetter(mouseX, mouseY) {
   for(letter of letters) {
     if(letter.mouseInRectangle(mouseX, mouseY)) {
-      letter.color = [255, 255, 0]
+      letter.color = [255, 255, 0] // yellow
       letter.selected = true
       selectedLetters += letter.s
       return

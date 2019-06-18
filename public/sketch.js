@@ -6,13 +6,15 @@
 */
 
 /*
-[ ] выводим слово из словаря
-[ ] слово исчезает через 3 секунды
-[ ] создаем кучу букв
-[ ] кликаем мышкой в нужном порядке
+[+] выводим слово из словаря
+[-] слово исчезает через 3 секунды
+[+] создаем кучу букв
+[+] кликаем мышкой в нужном порядке
 при этом поле с исходным словом заполняется
 буквами, на которые мы кликнули
 , правильная буква или нет становится понятно когда соберём всё слово
+[ ] буквы не должны накладываться друг на друга
+[ ] буквы должны быть одинакового размера на разных устройствах, по крайней мере чтобы было удобно кликать
 */
 
 // image drag: https://codepen.io/DonKarlssonSan/pen/wgWyWx
@@ -30,11 +32,13 @@ const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXZ'
 // PC
 let letterWidth = 44
 let letterHeight = 66
+let textSize = 80
 
 // phone
 if(isMobileDevice) {
-  letterWidth = 60//44
-  letterHeight = 80//66
+  letterWidth = 75//44
+  letterHeight = 110//66
+  textSize = 100 // больше чем на PC
 }
 
 
@@ -49,26 +53,25 @@ let [w, h] = [300, 300]
 let letters = []
 let selectedLetters = ''
 
-
-let textSize = 80//80
 let hintColor = [255, 255, 255]
 let backgroundColor = [100, 100, 100]
 
-
-
+let hintIndex = 0
 let hints = [
+  'HI!',
   'PEN',
+  'MAN',
   'TREE',
   'WIND',
   'HELLO', 
-  // 'WATER',
-  // 'CHILD',
-  // 'COLOR',
-  // 'POTATO',
-  // 'STRING',
-  // 'JAVASCRIPT',
+  'WATER',
+  'CHILD',
+  'COLOR',
+  'POTATO',
+  'STRING',
+  'JAVASCRIPT',
 ]
-let hintIndex = 0
+
 
 let wordAccepted = false
 
@@ -78,7 +81,7 @@ let wordAccepted = false
 
 let label
 function setup() {
-  label = createP('Собери слово')
+  label = createP('Игра "Собери слово"')
   createCanvas(w, h)
   windowResized()
   textFont("consolas", textSize)
