@@ -7,7 +7,7 @@ const isMobileDevice = isMobile()
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
 // debug mobile.js
-const isDebug = true
+const isDebug = false
 
 // PC
 let letterWidth = 44
@@ -33,6 +33,7 @@ let gameState = GAME_STATE_START
 
 // список букв, каждая из которых будет объектом Letter
 let letters = []
+// список выбранных букв, будем хранить его в виде строки
 let selectedLetters = ''
 
 // цвет выбранной игроком буквы
@@ -44,6 +45,7 @@ let backgroundColor = [100, 100, 100]
 
 // hintIndex указывает на первое слово, оно имеет индекс 0
 let hintIndex = 0
+
 // список слов
 let hints = [
   'HI!',

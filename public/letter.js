@@ -20,13 +20,11 @@ class Letter {
   show() {
     push()
         push()
-          if(isDebug) {
-            // рисуем красный прямоугольник вокруг буквы
-            stroke('red')
-            strokeWeight(2)
-            noFill()
-            rect(this.x, this.y, this.width, this.height)
-          }
+          // рисуем прямоугольник вокруг буквы
+          stroke(this.color)
+          strokeWeight(2)
+          noFill()
+          rect(this.x, this.y, this.width, this.height)
         pop()
       textAlign(LEFT, TOP)
       fill(this.color)
