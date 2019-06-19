@@ -20,11 +20,13 @@ class Letter {
   show() {
     push()
         push()
-          // рисуем красный прямоугольник вокруг буквы
-          // stroke('red')
-          // strokeWeight(2)
-          // noFill()
-          // rect(this.x, this.y, this.width, this.height)
+          if(isDebug) {
+            // рисуем красный прямоугольник вокруг буквы
+            stroke('red')
+            strokeWeight(2)
+            noFill()
+            rect(this.x, this.y, this.width, this.height)
+          }
         pop()
       textAlign(LEFT, TOP)
       fill(this.color)
@@ -42,11 +44,6 @@ class Letter {
     } else {
       return false
     }
-  }
-  
-  intersect(otherLetter) {
-    // intersect equal rectangles
-    return false
   }
 }
 
@@ -73,52 +70,27 @@ function scatterLetters() {
   console.log(`extendedAlphabet = ${extendedAlphabet}`)
   // раскидываем буквы
   for (let symbol of extendedAlphabet) {
-    appendLetter(symbol)
-  }
-}
-
-
-function appendLetter(symbol) {
-  let xpos
-  let ypos
-  let letter
-  do {
-    if(n++ > 10000) { // защита от зацикливания
-      throw "алгоритм зациклился n>10000 letterIntersectOther(letter, letters) = true"
-    }
-    // создаем букву в случайном месте на экране
-    // буквы не должны выходить за края экрана
-    // поэтому отнимаем от ширины(высоты) экрана
-    // ширину(высоту) прямоугольника, огрничивающего букву
-    // random(a, b) генерирует случайное число в интервале [a, b]
-    
-    xpos = random(0, gameWidth() - letterWidth)
-    ypos = random(0, gameHeight() - letterHeight)
-    
+    // генерируем случайную позицию на экране для одной буквы
+    let xpos = random(0, gameWidth() - letterWidth)
+    let ypos = random(0, gameHeight() - letterHeight)
+    // создаём объект букву
     letter = new Letter(xpos, ypos, symbol)
-  } while( letterIntersectOther(letter, letters) )
-    
-  // если буква не пересекается с другими
-  // добавляем букву в кучку
-  letters.push(letter)
-}
-
-
-function letterIntersectOther(letter, letters) {
-  for(let otherLetter of letters) {
-    if(letter.intersect(otherLetter)) {
-      return true
-    }
+    // добавляем букву в кучку
+    letters.push(letter)
   }
-  return false
 }
 
 function selectLetter(mouseX, mouseY) {
   for(letter of letters) {
+    // если курсор в прямоугольнике и буква не была нажата ранее
     if(letter.mouseInRectangle(mouseX, mouseY) && letter.selected == false) {
-      letter.color = [255, 255, 0] // yellow
+      // присваиваем букве цвет
+      letter.color = letterSelectedColor
+      // запоминаем что она была нажата игроком
       letter.selected = true
+      // добавляем в список выбранных игроком букв
       selectedLetters += letter.s
+      // выходим из функции, так как нам нужно выбрать только одну букву
       return
     }
   }

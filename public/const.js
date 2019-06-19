@@ -35,6 +35,8 @@ let gameState = GAME_STATE_START
 let letters = []
 let selectedLetters = ''
 
+// цвет выбранной игроком буквы
+let letterSelectedColor = [255, 255, 0]
 // цвет слова
 let hintColor = [255, 255, 255]
 // цвет фона
@@ -57,5 +59,3 @@ let hints = [
   'STRING',
   'JAVASCRIPT',
 ]
-
-let wordAccepted = false
