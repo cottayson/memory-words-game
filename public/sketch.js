@@ -14,88 +14,42 @@
 буквами, на которые мы кликнули
 , правильная буква или нет становится понятно когда соберём всё слово
 [ ] буквы не должны накладываться друг на друга
-[ ] буквы должны быть одинакового размера на разных устройствах, по крайней мере чтобы было удобно кликать
-*/
+[+] буквы должны быть одинакового размера на разных устройствах, по крайней мере чтобы было удобно кликать
+
+[ ] счёт верно и неверно
+ угаданных слов
+ 
+[ ] добавить состояние начала игры, приветствие
+ */
 
 // image drag: https://codepen.io/DonKarlssonSan/pen/wgWyWx
 
 // gulp reload: https://www.youtube.com/watch?v=KURMrW-HsY4&index=7&list=PLRk95HPmOM6PN-G1xyKj9q6ap_dc9Yckm
 
 // https://stackoverflow.com/questions/32399469/livereload-not-working-in-chrome-using-gulp-what-am-i-missing
-// ***************************************************
-// *                    CONSTS                       *
-// ***************************************************
-let isMobileDevice = isMobile()
 
-const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXZ'
-
-// PC
-let letterWidth = 44
-let letterHeight = 66
-let textSize = 80
-
-// phone
-if(isMobileDevice) {
-  letterWidth = 75//44
-  letterHeight = 110//66
-  textSize = 100 // больше чем на PC
-}
-
-
-const GAME_STATE_START = 0
-const GAME_STATE_CLICK_LETTER = 1
-const GAME_STATE_SHOW_RESULT = 2
-const GAME_STATE_RESTART = 3
-const NUMBER_OF_STATES = 4
-
-let gameState = GAME_STATE_START
-let [w, h] = [300, 300]
-let letters = []
-let selectedLetters = ''
-
-let hintColor = [255, 255, 255]
-let backgroundColor = [100, 100, 100]
-
-let hintIndex = 0
-let hints = [
-  'HI!',
-  'PEN',
-  'MAN',
-  'TREE',
-  'WIND',
-  'HELLO', 
-  'WATER',
-  'CHILD',
-  'COLOR',
-  'POTATO',
-  'STRING',
-  'JAVASCRIPT',
-]
-
-
-let wordAccepted = false
 
 // ***************************************************
 // *                    SETUP                        *
 // ***************************************************
 
+// создаём переменную, где будет храниться html элемент <p> 
 let label
 function setup() {
+  // создаём надпись ( html элемент <p> )
   label = createP('Игра "Собери слово"')
-  createCanvas(w, h)
-  windowResized()
+  // устанавливаем размеры экрана
+  createCanvas(gameWidth(), gameHeight())
+  // выбираем шрифт и размер букв
   textFont("consolas", textSize)
+  // центрируем текст надписей
   textAlign(CENTER, CENTER);
-  // поддержка телефонов и планшетов
+  // отключаем частую перерисовку экрана
   noLoop()
-  
-  //draw()
-  
-  // scatterLetters()
 }
 
+// возвращает true если список слов закончился
 function isAllWordsUsed() {
-  // если последнее слово, то рестарт игры
   if(hintIndex == hints.length - 1) {
     return true
   } else {
@@ -103,42 +57,53 @@ function isAllWordsUsed() {
   }
 }
 
+// возвращает true если игрок нашёл нужно количество букв(не факт что правильных)
 function userFoundAllLetters() {
   return selectedLetters.length >= hints[hintIndex].length
 }
 
-function resetGame() {
-  console.log('resetGame')
+// начинает игру сначала
+function restartGame() {
+  // показываем надпись
   label.show()
-  hintIndex = 0 // теперь индекс указывает на первое слово в списке слов hints
+  // теперь индекс указывает на первое слово в списке слов hints
+  hintIndex = 0 
 }
 
 function userAction() {
   if(gameState == GAME_STATE_START) {
+    // скрываем надпись
     label.hide()
+    // очищаем список выбранных игроком букв
     selectedLetters = []
+    // раскидываем буквы по экрану
     scatterLetters()
+    // переходим в следующее состояние
     gameState = GAME_STATE_CLICK_LETTER
   } else if(gameState == GAME_STATE_CLICK_LETTER) {
+    // попытка игрока выбрать букву
     selectLetter(mouseX, mouseY)
+    // если все буквы собраны
     if(userFoundAllLetters()) {
+      // переходим в следующее состояние
       gameState = GAME_STATE_SHOW_RESULT
     }
   } else if(gameState == GAME_STATE_SHOW_RESULT) {
-    if(isAllWordsUsed()) {// если слова кончились
+    // если слова кончились
+    if(isAllWordsUsed()) {
       // спрашиваем игрока: сыграть заново?
       gameState = GAME_STATE_RESTART
-    } else { // если ещё есть слова
+    } else { // если остались слова
       // продолжаем игру
-      nextHint()
+      nextHint() // переход к следующему слову
       gameState = GAME_STATE_START
     }
   } else if(gameState == GAME_STATE_RESTART)  {
-    resetGame()
-
+    // начинаем игру сначала
+    restartGame()
+    // переходим в состояние GAME_STATE_START
     gameState = GAME_STATE_START
   }
-  console.log(`hintIndex = ${hintIndex}`)
 }
 
 // ***************************************************
@@ -146,44 +111,49 @@ function userAction() {
 // ***************************************************
 
 function draw() {
+  // устанавливаем цвет фона
   background(backgroundColor);
   
-  if (gameState == GAME_STATE_START) { //показываем слово
-    
+  if (gameState == GAME_STATE_START) { 
+    //показываем слово
     showHint()
-    
-  } else if(gameState == GAME_STATE_CLICK_LETTER) { //игрок кликает на буквы
-    
+  } else if(gameState == GAME_STATE_CLICK_LETTER) { 
+    //игрок кликает на буквы
     for (let letter of letters) {
-      letter.show()
+      // рисуем каждую букву letter из кучки letters
+      letter.show() 
     }
-    
-  } else if(gameState == GAME_STATE_SHOW_RESULT) { // показываем результат
-    
+  } else if(gameState == GAME_STATE_SHOW_RESULT) { 
+    // показываем результат
     showResult()
-    
-  } else if(gameState == GAME_STATE_RESTART) { // спрашиваем: перезапустить игру?
-    
+  } else if(gameState == GAME_STATE_RESTART) { 
+    // спрашиваем: перезапустить игру?
     showRestartScreen()
-    
   }
   
-  // if(isPhone()) {
-    // text("isPhone", 300, 100)
-  // } else 
-  // if(isMobile()){
-    // text("isTablet", 300, 100)
-  // } else {
-    // text("isPC", 300, 100)
-  // }
+  // если нужно выводим отладочную информацию
+  if(isDebug) {
+    if(isPhone()) {
+      text("isPhone", 300, 100)
+    } else 
+    if(isMobile()){
+      text("isTablet", 300, 100)
+    } else {
+      text("isPC", 300, 100)
+    }
+  }
   
   console.log("draw")
 }
 
+// переход к следующему слову
 function nextHint() {
   if(hintIndex >= hints.length || hintIndex < 0) {
     throw `Ошибка индекс ${hintIndex} указывает на несуществующее слово`
   }
+  // увеличиваем индекс, указывающий на слово
+  // в списке hints, на единицу, чтобы он указвал
+  // на следущее слово
   hintIndex = hintIndex + 1
 }
 
@@ -202,37 +172,45 @@ function showHint() {
 }
 
 function showResult() {
-  push()
-  if(selectedLetters == hints[hintIndex]) { // слово собрано верно
-    fill(255, 255, 255)
-    text('Ты верно собрал слово!',gameWidth() / 2, gameHeight() / 2)
-    fill(255, 255, 0)
-    text(hints[hintIndex],                   gameWidth() / 2,  gameHeight() / 2 + letterHeight)
-  } else { // слово собрано неверно
-    fill(255, 255, 255)
-    text('Ты собрал слово:',     gameWidth() / 2, gameHeight() / 2)
-    fill(255, 255, 0)
-    text(selectedLetters,        gameWidth() / 2, gameHeight() / 2 + letterHeight)
-    fill(255, 255, 255)
-    text('нужно было собрать: ', gameWidth() / 2, gameHeight() / 2 + letterHeight*2)
-    fill(255, 255, 255)
-    text(hints[hintIndex],                   gameWidth() / 2,  gameHeight() / 2 + letterHeight*3)
+  push() // создаем новые настойки canvas
+  // координаты центра экрана
+  let centerX = gameWidth() / 2
+  let centerY = gameHeight() / 2
+  if(selectedLetters == hints[hintIndex]) {
+    // если слово собрано верно
+    fill('white') //  устанавливаем белый цвет текста
+    text('Ты верно собрал слово!', centerX, centerY)
+    fill('yellow') //  устанавливаем жёлтый цвет текста
+    text(hints[hintIndex],         centerX, centerY + letterHeight)
+  } else { 
+    // слово собрано неверно
+    fill('white')
+    text('Ты собрал слово:',       centerX, centerY)
+    fill('yellow')
+    text(selectedLetters,          centerX, centerY + letterHeight)
+    fill('white')
+    text('нужно было собрать: ',   centerX, centerY + letterHeight*2)
+    fill('white')
+    text(hints[hintIndex],         centerX, centerY + letterHeight*3)
   }
-  pop()
+  pop() // сбрасываем настройки canvas
 }
 
 function showRestartScreen() {
   text("начать игру заново?", gameWidth() / 2, gameHeight() / 2)
 }
 
+// ширина экрана игры
 function gameWidth() {
   return windowWidth-5
 }
 
+// высота экрана игры
 function gameHeight() {
   return windowHeight-5
 }
 
+// если окно променяло размеры, то меняем размеры canvas
 function windowResized() {
   resizeCanvas(gameWidth(), gameHeight())
 }
