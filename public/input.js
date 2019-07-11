@@ -29,6 +29,7 @@ function mousePressed() {
 }
 
 // убирает всплывающее меню
-window.oncontextmenu = function() {
-  return false;
+oncontextmenu = function() {
+  console.log("oncontextmenu")
+  return false
 }

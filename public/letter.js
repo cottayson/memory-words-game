@@ -56,13 +56,12 @@ function randomColor() {
 
 // расширяет алфавит, добавляя в него буквы из заданного слова
 function extendAlphabet(alphabet) {
+  // 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' + 'TREE'
   return alphabet + hints[hintIndex]
 }
 
-let n = 0 // защита от зацикливания
 function scatterLetters() {
   letters = []
-  n = 0 // защита от зацикливания
   // добавляем в алфавит слово, которое нужно найти
   extendedAlphabet = extendAlphabet(alphabet)
   console.log(`extendedAlphabet = ${extendedAlphabet}`)
